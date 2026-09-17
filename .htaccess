@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Protect sensitive files and folders
+    RewriteRule ^(\.env|\.env\.example|composer\.(json|lock)|schema\.sql|setup_db\.php|test_app\.php) - [F,L]
+    RewriteRule ^src/ - [F,L]
+    RewriteRule ^views/ - [F,L]
+    RewriteRule ^storage/database\.sqlite - [F,L]
+
+    # If the requested file or folder exists inside public/, serve it directly
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

@@ -83,6 +83,8 @@ class AdminController
         $tickets = $this->ticketRepo->search($filters);
         $technicians = $this->userRepo->getTechnicians();
         $categories = $this->categoryRepo->all();
+        $counts = $this->ticketRepo->getStatusCounts();
+        $unassignedCount = count($this->ticketRepo->search(['technician_id' => 'unassigned']));
 
         Response::view('admin/tickets', [
             'title' => 'ควบคุมใบงานซ่อมบำรุงทั้งหมด - Work Order Console',
@@ -91,6 +93,8 @@ class AdminController
             'technicians' => $technicians,
             'categories' => $categories,
             'filters' => $filters,
+            'counts' => $counts,
+            'unassignedCount' => $unassignedCount,
             'flash' => Response::getFlash(),
         ]);
     }
@@ -408,108 +412,5 @@ class AdminController
         }
         Response::redirect('/admin/categories');
     }
-
-    /**
-     * Outgoing Email Logs Viewer
-     */
-    public function emailLogs(Request $request): void
-    {
-        $mailDir = dirname(__DIR__, 2) . '/storage/mail';
-        $files = [];
-
-        if (is_dir($mailDir)) {
-            $rawFiles = scandir($mailDir, SCANDIR_SORT_DESCENDING);
-            foreach ($rawFiles as $file) {
-                if (str_ends_with($file, '.html')) {
-                    $files[] = [
-                        'filename' => $file,
-                        'size' => filesize("{$mailDir}/{$file}"),
-                        'time' => filemtime("{$mailDir}/{$file}"),
-                    ];
-                }
-            }
-        }
-
-        Response::view('admin/email-logs', [
-            'title' => 'ประวัติการส่งอีเมลแจ้งเตือน - Notification Mail Log',
-            'user' => Auth::user(),
-            'files' => $files,
-            'flash' => Response::getFlash(),
-        ]);
-    }
-
-    public function viewEmail(Request $request, string $filename): void
-    {
-        $mailDir = dirname(__DIR__, 2) . '/storage/mail';
-        $safeFile = basename($filename);
-        $path = "{$mailDir}/{$safeFile}";
-
-        if (file_exists($path)) {
-            header('Content-Type: text/html; charset=utf-8');
-            readfile($path);
-            exit;
-        }
-
-        Response::setFlash('error', 'ไม่พบไฟล์อีเมล');
-        Response::redirect('/admin/email-logs');
-    }
-
-    public function saveEmailSettings(Request $request): void
-    {
-        $data = $request->all();
-        $updates = [
-            'MAIL_MAILER' => trim($data['mail_mailer'] ?? 'smtp'),
-            'MAIL_HOST' => trim($data['mail_host'] ?? 'smtp.gmail.com'),
-            'MAIL_PORT' => trim($data['mail_port'] ?? '465'),
-            'MAIL_USERNAME' => trim($data['mail_username'] ?? ''),
-            'MAIL_ENCRYPTION' => trim($data['mail_encryption'] ?? 'ssl'),
-            'MAIL_FROM_ADDRESS' => trim($data['mail_from_address'] ?? ''),
-            'MAIL_FROM_NAME' => trim($data['mail_from_name'] ?? 'Smart IT Helpdesk'),
-        ];
-
-        // Only update password if provided
-        if (!empty($data['mail_password'])) {
-            $updates['MAIL_PASSWORD'] = trim($data['mail_password']);
-        }
-
-        Config::updateEnv($updates);
-        Response::setFlash('success', 'บันทึกการตั้งค่า SMTP ลงใน .env เรียบร้อยแล้ว');
-        Response::redirect('/admin/email-logs');
-    }
-
-    public function testSendEmail(Request $request): void
-    {
-        $data = $request->all();
-        $toEmail = trim($data['test_email'] ?? 'watweera82@gmail.com');
-        
-        if (empty($toEmail) || !filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
-            Response::setFlash('error', 'กรุณาระบุอีเมลผู้รับที่ถูกต้อง เช่น watweera82@gmail.com');
-            Response::redirect('/admin/email-logs');
-            return;
-        }
-
-        $emailService = new EmailNotificationService();
-        $override = [];
-        if (!empty($data['mail_host'])) $override['host'] = trim($data['mail_host']);
-        if (!empty($data['mail_port'])) $override['port'] = (int)trim($data['mail_port']);
-        if (!empty($data['mail_username'])) $override['username'] = trim($data['mail_username']);
-        if (!empty($data['mail_password'])) $override['password'] = trim($data['mail_password']);
-        if (!empty($data['mail_encryption'])) $override['encryption'] = trim($data['mail_encryption']);
-        if (!empty($data['mail_from_address'])) $override['from_address'] = trim($data['mail_from_address']);
-        if (!empty($data['mail_from_name'])) $override['from_name'] = trim($data['mail_from_name']);
-
-        $res = $emailService->testSmtpConnection($toEmail, $override);
-
-        if ($res['success']) {
-            Response::setFlash('success', $res['message']);
-        } else {
-            Response::setFlash('error', $res['message']);
-        }
-
-        if (!empty($res['debug'])) {
-            $_SESSION['smtp_debug'] = $res['debug'];
-        }
-
-        Response::redirect('/admin/email-logs');
-    }
 }
+

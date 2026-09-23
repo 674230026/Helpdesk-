@@ -99,6 +99,7 @@ assert($t['status'] === 'in_progress');
 
 // 6. Technician Requisitions Spare Part
 $part = $parts[0];
+$spareRepo->increaseStock($part['id'], 10);
 $ticketPartsRepo = new TicketPartsRepository();
 $partReqId = $ticketPartsRepo->requestPart($ticketId, $part['id'], 2);
 $statusService->transition($ticketId, 'waiting_parts', $tech, 'รอเบิกอะไหล่');

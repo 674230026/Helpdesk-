@@ -16,8 +16,7 @@
    - `TicketObserver` ทำหน้าที่ดักจับ Event และเรียก `EmailNotificationService` ส่งอีเมล HTML อัตโนมัติ
 3. **Email Notification Engine:**
    - ส่งอีเมลแจ้งเตือนอัตโนมัติพร้อม Responsive HTML Email Templates สำหรับทุกขั้นตอน
-   - รองรับโหมด `log` (บันทึกไฟล์ HTML ใน `storage/mail/` ให้เปิดดูผ่าน Browser ได้ทันที), `smtp` (PHPMailer SMTP), และ native `mail()`
-   - มีหน้า **Admin Email Log Viewer** (`/admin/email-logs`) ดูประวัติและเปิดพรีวิวอีเมลจริงในระบบได้เลย
+   - รองรับโหมด `log` (บันทึกไฟล์ HTML ใน `storage/mail/`), `smtp` (PHPMailer SMTP), และ native `mail()`
 4. **Role-Based Access Control (RBAC):**
    - ตรวจสอบสิทธิ์อย่างรัดกุมผ่าน `AuthMiddleware` และ `RoleMiddleware`
    - มีฟังก์ชัน **1-Click Quick Demo Switcher** สลับบทบาททดสอบระหว่าง Admin, Technician, และ User ได้ทันทีในคลิกเดียว
@@ -159,7 +158,6 @@ smart-it-helpdesk/
 
 ### วิธีตรวจสอบอีเมลใน Local Development:
 - ทุกครั้งที่ส่งอีเมล สำเนาไฟล์ `.html` จะถูกบันทึกในโฟลเดอร์ `storage/mail/`
-- เข้าไปที่เมนู **"📧 Email Logs"** (`/admin/email-logs`) ในหน้า Admin เพื่อกดคลิกเปิดดูหน้าตาอีเมลจริงได้ทันที
 
 ---
 

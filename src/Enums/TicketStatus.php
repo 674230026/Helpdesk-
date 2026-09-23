@@ -47,15 +47,30 @@ enum TicketStatus: string
     public function badgeClass(): string
     {
         return match ($this) {
-            self::PENDING_APPROVAL => 'bg-amber-100 text-amber-800 border border-amber-200',
-            self::APPROVED => 'bg-cyan-100 text-cyan-800 border border-cyan-200',
-            self::ASSIGNED => 'bg-blue-100 text-blue-800 border border-blue-200',
-            self::EN_ROUTE => 'bg-purple-100 text-purple-800 border border-purple-200 animate-pulse',
-            self::IN_PROGRESS => 'bg-indigo-100 text-indigo-800 border border-indigo-200',
-            self::WAITING_PARTS => 'bg-orange-100 text-orange-800 border border-orange-200 font-semibold',
-            self::RESOLVED => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
-            self::CLOSED => 'bg-slate-100 text-slate-700 border border-slate-300',
-            self::CANCELLED => 'bg-rose-100 text-rose-700 border border-rose-200',
+            self::PENDING_APPROVAL => 'bg-amber-100/90 text-amber-950 border border-amber-300 font-bold shadow-2xs',
+            self::APPROVED => 'bg-sky-100/90 text-sky-950 border border-sky-300 font-bold shadow-2xs',
+            self::ASSIGNED => 'bg-purple-100/90 text-purple-950 border border-purple-300 font-bold shadow-2xs',
+            self::EN_ROUTE => 'bg-violet-100/90 text-violet-950 border border-violet-300 font-bold animate-pulse shadow-2xs',
+            self::IN_PROGRESS => 'bg-blue-100/90 text-blue-950 border border-blue-300 font-bold shadow-2xs',
+            self::WAITING_PARTS => 'bg-orange-100/90 text-orange-950 border border-orange-300 font-bold shadow-2xs',
+            self::RESOLVED => 'bg-teal-100/90 text-teal-950 border border-teal-300 font-bold shadow-2xs',
+            self::CLOSED => 'bg-emerald-100/90 text-emerald-950 border border-emerald-300 font-bold shadow-2xs',
+            self::CANCELLED => 'bg-rose-100/90 text-rose-950 border border-rose-300 font-bold shadow-2xs',
+        };
+    }
+
+    public function iconName(): string
+    {
+        return match ($this) {
+            self::PENDING_APPROVAL => 'clock',
+            self::APPROVED => 'check-circle',
+            self::ASSIGNED => 'user',
+            self::EN_ROUTE => 'truck',
+            self::IN_PROGRESS => 'wrench',
+            self::WAITING_PARTS => 'package',
+            self::RESOLVED => 'check-circle',
+            self::CLOSED => 'check',
+            self::CANCELLED => 'x-circle',
         };
     }
 

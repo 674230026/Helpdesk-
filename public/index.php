@@ -257,24 +257,7 @@ $router->post('/admin/categories/{id}/delete', [AdminController::class, 'deleteC
     CsrfMiddleware::class
 ]);
 
-// Email Logs & SMTP Live Test
-$router->get('/admin/email-logs', [AdminController::class, 'emailLogs'], [
-    AuthMiddleware::class,
-    new RoleMiddleware('admin')
-]);
-$router->get('/admin/email-logs/view', function (Request $req) {
-    (new AdminController())->viewEmail($req, $req->input('file', ''));
-}, [AuthMiddleware::class, new RoleMiddleware('admin')]);
-$router->post('/admin/email-settings/save', [AdminController::class, 'saveEmailSettings'], [
-    AuthMiddleware::class,
-    new RoleMiddleware('admin'),
-    CsrfMiddleware::class
-]);
-$router->post('/admin/email-settings/test', [AdminController::class, 'testSendEmail'], [
-    AuthMiddleware::class,
-    new RoleMiddleware('admin'),
-    CsrfMiddleware::class
-]);
+
 
 // --- API FETCH ROUTES ---
 $router->get('/api/tickets', [ApiController::class, 'getTickets']);

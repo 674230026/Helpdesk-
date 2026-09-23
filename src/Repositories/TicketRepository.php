@@ -324,6 +324,11 @@ class TicketRepository implements RepositoryInterface
         return $counts;
     }
 
+    public function countByStatus(?int $userId = null, ?int $techId = null): array
+    {
+        return $this->getStatusCounts($userId, $techId);
+    }
+
     /**
      * SLA Compliance Rate % (Resolved before or on SLA due date)
      */
